@@ -1,39 +1,55 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-canvas.width = 1400;
-canvas.height = 1400;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - $("#box").height();
+let width = canvas.width;
+let height = canvas.height;
 
 //1辺のサイズ(デフォルトは10)
 let maxnum = 10;
+//配列サイズ(デフォルトは21)
+let arraySize = 2 * maxnum + 1;
 
-//配列サイズ
-const arraySize = 2 * maxnum + 1;
+const setnum = function() {
+    ctx.clearRect(0, 0, width, height);
+    maxnum = parseInt(document.forms.id_fm1.id_maxnum_form.value);
+    arraySize = 2 * maxnum + 1;
+    init();
+    putHex(width/2,height/2);
+}
 
-//盤面を記録する配列，盤面コピー用の配列の定義と初期化
+const next = function(){
+    ctx.clearRect(0, 0, width, height);
+    update();
+    putHex(width/2,height/2);
+}
+
 let table = [];
 let copy = [];
 
-for(let i = 0; i <= arraySize; i++) {
-    let tableItem;
-    let copyItem;
-
-    if(i<=maxnum){
-        tableItem = new Array(maxnum+i+1).fill(0);
-        copyItem = new Array(maxnum+i+1).fill(0);
-    }else{
-        tableItem = new Array(3*maxnum-i+1).fill(0);
-        copyItem = new Array(3*maxnum-i+1).fill(0);
-    }
-    table.push(tableItem);
-    copy.push(copyItem);
-}
-
 //盤面の初期化
 function init() {
+    table = [];
+    copy = [];
+    for(let i = 0; i <= arraySize; i++) {
+        let tableItem;
+        let copyItem;
+
+        if(i<=maxnum){
+            tableItem = new Array(maxnum+i+1).fill(0);
+            copyItem = new Array(maxnum+i+1).fill(0);
+        }else{
+            tableItem = new Array(3*maxnum-i+1).fill(0);
+            copyItem = new Array(3*maxnum-i+1).fill(0);
+        }
+        table.push(tableItem);
+        copy.push(copyItem);
+    }
+
     for(let i=1; i<arraySize; i++){
         for(let j=1; j<table[i].length; j++){
-            if(Math.floor(Math.random() * 3)==0)
+            if(Math.floor(Math.random() * 5)==0)
                 table[i][j] = 1;
             else
                 continue;
@@ -45,10 +61,7 @@ function init() {
 function swap() {
     for(let i=1; i<arraySize; i++){
         for(let j=1; j<table[i].length; j++){
-            if(Math.floor(Math.random() * 3)==0)
-                table[i][j] = copy[i][j];
-            else
-                continue;
+            table[i][j] = copy[i][j];
         }
     }
 }
@@ -67,7 +80,7 @@ function check(i,j) {
         count++;
     if(table[i+1][j] == 1)
         count++;
-    if(table[i-1][j+1] == 1)
+    if(table[i+1][j+1] == 1)
         count++;
 
     return count;
@@ -79,7 +92,9 @@ function update() {
     for(let i=1; i<arraySize; i++){
         for(let j=1; j<table[i].length; j++){
             count = check(i,j);
-            if(count>=2 && count <= 4)
+            if(count > 1 && count < 4)
+                copy[i][j] = 1;
+            else if(count == 4 && table[i][j] == 1)
                 copy[i][j] = 1;
             else
                 copy[i][j] = 0;   
@@ -125,13 +140,13 @@ function drawHex(x, y, size,color) {
 
 //六角形を並べる
 function putHex(x, y) {
-    let size = 15;
+    let size = 10;
     
     const movex = Math.sin(5*Math.PI / 3) * size;    
     const movey = 3*Math.cos(5*Math.PI / 3) * size;
 
     let startx = x + movex * maxnum;
-    let starty = y + movey * maxnum;
+    let starty = y + (-1)*movey * maxnum;
 
     let tempx, tempy;
     
@@ -165,10 +180,3 @@ function putHex(x, y) {
         tempy += movey;
     }
 }
-
-//テスト用
-init()
-for(let i=0; i<2*maxnum+1; i++){
-    console.log(table[i]);
-}
-putHex(700,100);
