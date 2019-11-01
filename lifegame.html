@@ -11,26 +11,45 @@
       width: 100%;
       height: 100%;
       overflow:hidden;
-      margin-right: auto;
-      margin-left: auto;
+      margin:0;
     }
-    canvas{
-      margin-right: auto;
-      margin-left: auto;
+
+    #box_set{
+      width: 50%;
+      padding: 10px;
+      margin: auto;
+      border: 5px double #333333;
+      width: 50%;
+      line-height: 200%
+    }
+    
+    #canvas_set{
+      width: 90%;
+      height: 90%;
+      margin:0 auto;
     }
   </style>
 
   <body>
-    <div id="box" style="padding: 10px; margin-bottom: 10px;border: 5px double #333333;"></br>
-      <form name="fm1" id="id_fm1">
-        1辺の正六角形の数：<input name="maxnum_form" id="id_maxnum_form" value=10 >
-        <input type="text" name="dummy" style="display:none;">
-        <button type="button" onclick="setnum()">OK</button></br></br>
-        次の世代に<button type="button" onclick="next()">進む</button>
+    <div id="box_set" style="margin-top: 1%; margin-bottom: 1%;">
+      <form name="fm1" id="id_fm1" >
+        Board type : 
+        <input type="radio" name="types" value="0" checked>Square
+        <input type="radio" name="types" value="1">Hexagon</br>
+
+        Board size : 
+        <input name="maxnum_form" id="id_maxnum_form" value=10 >
+        <input type="text" name="dummy" style="display:none;"></br>
+
+        <button type="button" onclick="settings(types.value)">Generate board</button>
+        <button type="button" onclick="next()">Next generation</button>
       </form>
     </div>
 
-    <canvas id="canvas"></canvas>
+    <div id=canvas_set>
+      <canvas id="canvas"></canvas>
+    </div>
+
     <script src="lifegame.js"></script>
   </body>
 </html>
